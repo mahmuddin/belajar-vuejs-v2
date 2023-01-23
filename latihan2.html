@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Beginner</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" />
+    <style>
+        body {
+            margin: 5%;
+            font-family: "Quicksand", sans-serif;
+        }
+
+        .active {
+            background: salmon;
+            border: 0;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <header-component nama="VueJS" gambar="images/logo.png"></header-component>
+        <main>
+            <kelas-component :items="kelas" :inputKelas="kelasbaru" />
+        </main>
+        <footer-component></footer-component>
+    </div>
+    <script src="js/vue@2.6.0.min.js"></script>
+    <script>
+        Vue.component('header-component', {
+            props: ['nama', 'gambar'],
+            template: `<header>
+                        <img :src="gambar" alt="" width="100" />
+                        <p>The Progressive Javascript Framework</p>
+                        <p v-text="pesan"></p>
+                        <p>{{ 'Hello ' + nama }}</p>
+                       </header>`,
+            data: function () {
+                return {
+                    pesan: 'Hello, Guys!'
+                }
+            }
+        })
+
+        Vue.component('footer-component', {
+            template: `<footer id="footer"> 
+                        <p>copyright 2022</p>
+                       </footer>`
+        })
+
+
+
+        Vue.component('kelas-component', {
+            props: ['items', 'inputKelas'],
+            template: ` 
+            <div>
+                <h3>Tambah Kelas</h3>
+                <p>
+                    <input type="text" placeholder="Nama Kelas" v-on:keyup.enter="submitNamaKelas" v-model="inputKelas">
+                </p>
+
+                <hr>
+                <h3>Total kelas ({{ items.length }})</h3>
+
+                <template v-if="items.length > 0">
+                    <ul>
+                        <li v-for="(item, index) of items">{{ index + 1 }} - {{ item }}</li>
+                    </ul>
+                </template>
+
+                <li v-else>Kelas belum tersedia</li>
+            </di>`,
+            data: function () {
+                return {
+
+                }
+            },
+            methods: {
+                submitNamaKelas: function () {
+                    this.kelas.unshift(this.kelasbaru)
+                    this.kelasbaru = '';
+                }
+            }
+        })
+
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                // bisa berupa: string, number, boolean, array atau object
+                kelas: ['Golang', 'PHP'],
+                kelasbaru: ''
+            },
+            methods: {
+
+            },
+            computed: {
+
+            }
+        });
+    </script>
+</body>
+
+</html>

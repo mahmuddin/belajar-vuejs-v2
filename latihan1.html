@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Vue Beginner</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" />
+	<style>
+		body {
+			margin: 5%;
+			font-family: "Quicksand", sans-serif;
+		}
+
+		.active {
+			background: salmon;
+			border: 0;
+			padding: 5px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<header>
+			<img src="images/logo.png" alt="" width="80" />
+			<h1>{{ getNama() }}</h1>
+			<h1 v-text="nama">{{ }}</h1>
+
+			<h3>Form Submit</h3>
+			<p>
+				<input type="text" placeholder="Nama Kelas" v-on:keyup.enter="submitNamaKelas" v-model="kelasbaru">
+			</p>
+
+			<p>
+				<input type="text" v-model="nama">
+			</p>
+
+			<h3>Total kelas ({{ kelas.length }})</h3>
+
+			<template v-if="kelas.length > 0">
+				<ul>
+					<li v-for="(item, index) of kelas">{{ index + 1 }} - {{ item }}</li>
+				</ul>
+			</template>
+
+			<li v-else>Kelas belum tersedia</li>
+
+			<ul>
+				<li v-for="k of kelas" v-text="k"></li>
+			</ul>
+			<p>{{ kelas }}</p>
+			<div>
+				<label><input type="checkbox" name="" id="" value="React" v-model="kelas"> React</label>
+				<label><input type="checkbox" name="" id="" value="Vuejs" v-model="kelas"> Vuejs</label>
+				<label><input type="checkbox" name="" id="" value="Angular" v-model="kelas"> Angular</label>
+			</div>
+
+			<ul>
+				<!-- <li v-for="b in bahasa">{{ b }}</li> -->
+				<!-- <li v-for="b of bahasa">{{ b }}</li> -->
+				<li v-for="b of bahasa" v-text="b"></li>
+			</ul>
+
+			<h3>Perluangan (1 - 5)</h3>
+			<ul>
+				<li v-for="x in 5">{{ x }}</li>
+			</ul>
+
+			<h3>Mencari Bilangan Genap: {{ numbers }}</h3>
+			<ul>
+				<li v-for="x in cariBilanganGenap(numbers)">{{ x }}</li>
+			</ul>
+
+			<h1 v-html="link"></h1>
+			<p>
+				<!-- <button v-on:click="handleClick">Push</button> -->
+				<button @click="handleClick">Push</button>
+			</p>
+			<h1>{{ bilangan * 1 }}</h1>
+			<p>Bilangan ini adalah bilangan {{ infoBilangan }}</p>
+			<h1>{{ nama.toUpperCase() }}</h1>
+			<p>{{ namaLengkap }}</p>
+			<!-- <img v-bind:src="gambar " alt="" /> -->
+			<img :src="gambar " alt="" />
+
+			<p>The Progressive Javascript Framework</p>
+
+			<a v-bind:class="{active: menu === 'home'}" href="#" @click="gantiMenu('home', $event)">Home</a>
+			<a v-bind:class="{active: menu === 'about'}" href="#" @click="gantiMenu('about', $event)">About</a>
+			<a v-bind:class="{active: menu === 'blog'}" href="#" @click="gantiMenu('blog', $event)">Blog</a>
+
+		</header>
+		<footer id="footer">
+			<p>copyright 2022</p>
+		</footer>
+	</div>
+
+	<!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script> -->
+	<script src="js/vue@2.6.0.min.js"></script>
+	<script>
+		const objMembers = {
+			// string, number, boolean, array, object
+			nama: "Happy coding",
+			pesan: "Hello world!",
+			qty: 1,
+			namaDepan: "Mahmuddin Nurul",
+			namaBelakang: "Fajri",
+			bilangan: 1,
+			link: '<a href="https://google.com">Google</a>',
+			gambar: "images/laptop.jpg",
+			menu: "home",
+			kelas: [],
+			bahasa: ['Golang', 'PHP', 'Phyton'],
+			numbers: [1, 2, 3, 4, 5],
+			kelasbaru : '' 
+		};
+
+		const vm = new Vue({
+			el: "#app",
+			data: objMembers,
+			methods: {
+				getNama: function () {
+					return "Hello, " + this.nama;
+				},
+				ubahNama: function (namaBaru) {
+					this.nama = namaBaru;
+				},
+				handleClick: function () {
+					this.bilangan++;
+					this.gambar = "images/magicom.jpg";
+				},
+				cariBilanganGenap: (numb) => {
+					return numb.filter(angka => {
+						return angka % 2 == 0
+					})
+				},
+				gantiMenu: function(data, event) {
+					event.preventDefault();
+					this.menu = data
+				},
+				submitNamaKelas: function(e){
+					let text = e.target.value 
+					this.kelas.push(this.kelasbaru)
+					this.kelasbaru = ""
+				}
+				
+			},
+			computed: {
+				totalBayar: function () {
+					return this.qty * 10000;
+				},
+				namaLengkap: function () {
+					return this.namaDepan + " " + this.namaBelakang;
+				},
+				infoBilangan: function () {
+					return this.bilangan % 2 === 0 ? "genap" : "ganjil";
+				},
+			},
+		});
+	</script>
+</body>
+
+</html>
