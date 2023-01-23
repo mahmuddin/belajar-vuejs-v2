@@ -24,19 +24,61 @@
 <body>
     <div id="app">
         <header-component nama="VueJS" gambar="images/logo.png"></header-component>
+
+        <nav>
+            <router-link to="/">Home</router-link>
+            <router-link to="/about">About</router-link>
+            <router-link to="/kelas">Kelas</router-link>
+        </nav>
         <main>
-            <programming-component v-bind:items="programmingLang" v-on:submit-programming-lang="submitProgrammingLang"
-                v-on:remove-programming-lang="removeProgrammingLang"></programming-component>
-            <home-component></home-component>
+            <!-- <kelas-component v-bind:items="kelas" v-on:submitKelas="submitKelas" v-on:removeKelas="removeKelas"></kelas-component> -->
+            <!-- <home-component></home-component> -->
+            <router-view v-bind:items="kelas" v-on:submit-kelas="submitKelas"
+                v-on:remove-kelas="removeKelas"></router-view>
         </main>
         <footer-component>
             <p>copyright 2022</p>
         </footer-component>
     </div>
     <script src="js/vue@2.7.14.min.js"></script>
+    <script src="js/vue-router.min.js"></script>
     <script>
         const Home = {
             template: `<div>Home</div>`,
+        }
+        const About = {
+            template: `<div>About</div>`,
+        }
+        const Kelas = {
+            props: ['items'],
+            template: ` 
+            <div>
+                <h3>Tambah Kelas</h3>
+                <p>
+                    <input type="text" placeholder="Programming Name" v-on:keyup.enter="$emit('submit-kelas', $event)">
+                </p>
+
+                <hr>
+                <h3>Total Kelas ({{ items.length }})</h3>
+
+                <template v-if="items.length">
+                    <ul>
+                        <li v-for="(item, index) of items">{{ index + 1 }} - {{ item }}
+                            <a href="" v-on:click.prevent="$emit('remove-kelas', index)">Remove</a>
+                        </li>
+                    </ul>
+                </template>
+
+                <li v-else>Kelas belum tersedia</li>
+            </di>`,
+            data: function () {
+                return {
+
+                }
+            },
+            methods: {
+
+            }
         }
         Vue.component('header-component', {
             props: ['nama', 'gambar'],
@@ -59,61 +101,39 @@
                        </footer>`
         })
 
+        //Vue.component('kelas-component', {
+        //})
 
+        const routes = [
+            { path: '/', component: Home },
+            { path: '/about', component: About },
+            { path: '/kelas', component: Kelas },
+        ]
 
-        Vue.component('programming-component', {
-            props: ['items'],
-            template: ` 
-            <div>
-                <h3>Add Programming Lang</h3>
-                <p>
-                    <input type="text" placeholder="Programming Name" v-on:keyup.enter="$emit('submit-programming-lang', $event)">
-                </p>
-
-                <hr>
-                <h3>Total programming lang ({{ items.length }})</h3>
-
-                <template v-if="items.length">
-                    <ul>
-                        <li v-for="(item, index) of items">{{ index + 1 }} - {{ item }}
-                            <a href="" v-on:click.prevent="$emit('remove-programming-lang', index)">Remove</a>
-                        </li>
-                    </ul>
-                </template>
-
-                <li v-else>Programming Lang not yet available</li>
-            </di>`,
-            data: function () {
-                return {
-
-                }
-            },
-            methods: {
-                
-            }
+        const router = new VueRouter({
+            mode: 'history',
+            routes // short for routes:routes
         })
-
-        const objMember = {
-            // bisa berupa: string, number, boolean, array atau object
-            programmingLang: ['Golang', 'PHP'],
-        }
 
         const vm = new Vue({
             el: '#app',
+            router,
             components: {
-                'home-component': Home
+                'home-component': Home,
             },
-            data: objMember,
+            data: {
+                kelas: [
+                    { id: 1, judul: 'VueJS', deskripsi: 'The Progressive Javascript Framework', gambar: './images/logo.png' },
+                    { id: 2, judul: 'ReactJS', deskripsi: 'A Javascript library for building user interfaces', gambar: './images/react_icon.png' },
+                ],
+            },
             methods: {
-                removeProgrammingLang: (index) => {
-                    console.log(this.programmingLang)
-                    this.programmingLang.splice(index, 1)
+                removeKelas: function (index) {
+                    this.kelas.splice(index, 1)
                 },
-                submitProgrammingLang: (event) => {
-                    console.log(this.programmingLang)
-                    console.log(event.target.value)
+                submitKelas: function (event) {
                     const text = event.target.value
-                    this.programmingLang.unshift(text)
+                    this.kelas.unshift(text)
                 }
             },
             computed: {
