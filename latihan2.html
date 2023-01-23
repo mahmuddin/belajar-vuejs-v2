@@ -38,9 +38,20 @@
             <p>copyright 2022</p>
         </footer-component>
     </div>
-    <script src="js/vue@2.7.14.min.js"></script>
+    <script src="js/vue@2.7.14.js"></script>
     <script src="js/vue-router.min.js"></script>
     <script>
+
+        function create_UUID() {
+            var dt = new Date().getTime();
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (dt + Math.random() * 16) % 16 | 0;
+                dt = Math.floor(dt / 16);
+                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
+        }
+
         const Home = {
             template: `<div>Home</div>`,
         }
@@ -52,12 +63,26 @@
             template: ` 
             <div>
                 <h3>Tambah Kelas</h3>
-                <p>
-                    <input type="text" placeholder="Programming Name" v-on:keyup.enter="$emit('submit-kelas', $event)">
-                </p>
+                
+                <form v-on:submit.prevent="submitKelasForm">
+                    <p><input type="text" v-model="kelas.judul" placeholder="Nama Kelas"></p>
+
+                    <div class="input-group">
+                        <label>Deskripsi: </label><br>
+                        <textarea v-model="kelas.deskripsi"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <p><img :src="previewImg" v-if="previewImg" width="200"></p>
+                        <label>Masukan Gambar: </label><br>
+                        <input type="file" ref="gambar" v-on:change="uploadGambar"/>
+                    </div>
+                    <br/>
+                    <button type="submit">Submit</button>
+                </form>
 
                 <hr>
-                <h3>Total Kelas ({{ items.length }})</h3>
+                <h3>Daftar Kelas ({{ items.length }})</h3>
 
                 <template v-if="items.length">
                     <ul>
@@ -68,14 +93,38 @@
                 </template>
 
                 <li v-else>Kelas belum tersedia</li>
-            </di>`,
+            </div>`,
             data: function () {
                 return {
-
+                    kelas: {
+                        judul: '',
+                        deskripsi: '',
+                        gambar: '',
+                    },
+                    previewImg: ""
                 }
             },
             methods: {
+                submitKelasForm: function () {
+                    const data = {
+                        id: create_UUID(),
+                        judul: this.kelas.judul,
+                        deskripsi: this.kelas.deskripsi,
+                        gambar: this.kelas.gambar
+                    }
+                    this.$emit('submit-kelas', data)
 
+                    this.kelas.judul = ''
+                    this.kelas.deskripsi = ''
+                    this.kelas.gambar = ''
+                    this.previewImg = ''
+                    this.$refs.gambar.value = ''
+                },
+                uploadGambar: function (event) {
+                    const namaGambar = event.target.files[0].name
+                    this.kelas.gambar = namaGambar
+                    this.previewImg = URL.createObjectURL(event.target.files[0])
+                }
             }
         }
         Vue.component('header-component', {
@@ -124,17 +173,18 @@
             },
             methods: {
                 removeKelas: function (id) {
-                    
+                    this.kelas = this.kelas.filter(item => item.id != id)
                 },
-                submitKelas: function (event) {
-                    const text = event.target.value
-                    this.kelas.unshift(text)
+                submitKelas: function (data) {
+                    this.kelas.push(data)
                 }
             },
             computed: {
 
             }
         });
+
+        Vue.config.devtools = true
     </script>
 </body>
 
