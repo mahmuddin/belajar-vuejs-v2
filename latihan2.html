@@ -25,12 +25,19 @@
     <div id="app">
         <header-component nama="VueJS" gambar="images/logo.png"></header-component>
         <main>
-            <kelas-component :items="kelas" :inputKelas="kelasbaru" />
+            <programming-component v-bind:items="programmingLang" v-on:submit-programming-lang="submitProgrammingLang"
+                v-on:remove-programming-lang="removeProgrammingLang"></programming-component>
+            <home-component></home-component>
         </main>
-        <footer-component></footer-component>
+        <footer-component>
+            <p>copyright 2022</p>
+        </footer-component>
     </div>
-    <script src="js/vue@2.6.0.min.js"></script>
+    <script src="js/vue@2.7.14.min.js"></script>
     <script>
+        const Home = {
+            template: `<div>Home</div>`,
+        }
         Vue.component('header-component', {
             props: ['nama', 'gambar'],
             template: `<header>
@@ -48,31 +55,33 @@
 
         Vue.component('footer-component', {
             template: `<footer id="footer"> 
-                        <p>copyright 2022</p>
+                        <slot></slot>
                        </footer>`
         })
 
 
 
-        Vue.component('kelas-component', {
-            props: ['items', 'inputKelas'],
+        Vue.component('programming-component', {
+            props: ['items'],
             template: ` 
             <div>
-                <h3>Tambah Kelas</h3>
+                <h3>Add Programming Lang</h3>
                 <p>
-                    <input type="text" placeholder="Nama Kelas" v-on:keyup.enter="submitNamaKelas" v-model="inputKelas">
+                    <input type="text" placeholder="Programming Name" v-on:keyup.enter="$emit('submit-programming-lang', $event)">
                 </p>
 
                 <hr>
-                <h3>Total kelas ({{ items.length }})</h3>
+                <h3>Total programming lang ({{ items.length }})</h3>
 
-                <template v-if="items.length > 0">
+                <template v-if="items.length">
                     <ul>
-                        <li v-for="(item, index) of items">{{ index + 1 }} - {{ item }}</li>
+                        <li v-for="(item, index) of items">{{ index + 1 }} - {{ item }}
+                            <a href="" v-on:click.prevent="$emit('remove-programming-lang', index)">Remove</a>
+                        </li>
                     </ul>
                 </template>
 
-                <li v-else>Kelas belum tersedia</li>
+                <li v-else>Programming Lang not yet available</li>
             </di>`,
             data: function () {
                 return {
@@ -80,22 +89,32 @@
                 }
             },
             methods: {
-                submitNamaKelas: function () {
-                    this.kelas.unshift(this.kelasbaru)
-                    this.kelasbaru = '';
-                }
+                
             }
         })
 
+        const objMember = {
+            // bisa berupa: string, number, boolean, array atau object
+            programmingLang: ['Golang', 'PHP'],
+        }
+
         const vm = new Vue({
             el: '#app',
-            data: {
-                // bisa berupa: string, number, boolean, array atau object
-                kelas: ['Golang', 'PHP'],
-                kelasbaru: ''
+            components: {
+                'home-component': Home
             },
+            data: objMember,
             methods: {
-
+                removeProgrammingLang: (index) => {
+                    console.log(this.programmingLang)
+                    this.programmingLang.splice(index, 1)
+                },
+                submitProgrammingLang: (event) => {
+                    console.log(this.programmingLang)
+                    console.log(event.target.value)
+                    const text = event.target.value
+                    this.programmingLang.unshift(text)
+                }
             },
             computed: {
 
