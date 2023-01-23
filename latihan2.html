@@ -31,8 +31,6 @@
             <router-link to="/kelas">Kelas</router-link>
         </nav>
         <main>
-            <!-- <kelas-component v-bind:items="kelas" v-on:submitKelas="submitKelas" v-on:removeKelas="removeKelas"></kelas-component> -->
-            <!-- <home-component></home-component> -->
             <router-view v-bind:items="kelas" v-on:submit-kelas="submitKelas"
                 v-on:remove-kelas="removeKelas"></router-view>
         </main>
@@ -63,8 +61,8 @@
 
                 <template v-if="items.length">
                     <ul>
-                        <li v-for="(item, index) of items">{{ index + 1 }} - {{ item }}
-                            <a href="" v-on:click.prevent="$emit('remove-kelas', index)">Remove</a>
+                        <li v-for="(item, index) of items">{{ index + 1 }} - {{ item.judul }}
+                            <a href="" v-on:click.prevent="$emit('remove-kelas', item.id)">Hapus</a>
                         </li>
                     </ul>
                 </template>
@@ -101,9 +99,6 @@
                        </footer>`
         })
 
-        //Vue.component('kelas-component', {
-        //})
-
         const routes = [
             { path: '/', component: Home },
             { path: '/about', component: About },
@@ -128,8 +123,8 @@
                 ],
             },
             methods: {
-                removeKelas: function (index) {
-                    this.kelas.splice(index, 1)
+                removeKelas: function (id) {
+                    
                 },
                 submitKelas: function (event) {
                     const text = event.target.value
